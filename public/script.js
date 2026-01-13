@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------
 // CONFIGURATION
 // -----------------------------------------------------------------
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzV1x9nBW4T3fpxmJ8NUDTTeZUwmcC1huNp0p7Blh3h1MfxJ6k0WhDCk25XzistLNF98Q/exec"; 
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynVAVZNZHJqvDmydLrLipd55YXkQGBlgvJsfzqyg6Hx1dlfN4W8hIxBjuxelvukqqlDA/exec"; 
 // -----------------------------------------------------------------
 
 // Global State
