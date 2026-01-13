@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>ADMIN | Preorder Panel</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+
+  
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div id="cinema-vignette"></div>
+
+  <div id="toastNotification" class="toast-box">
+
+    <i class="fa-solid fa-circle-check"></i>
+
+    <span id="toastMessage">Success</span>
+
+  </div>
+
+  <div id="loader">
+
+    <div class="spinner"></div>
+
+    <div class="loader-text">SYNCING DATA...</div>
+
+  </div>
+
+  <div class="modal-overlay" id="editModal">
+
+    <div class="modal-box">
+
+      <div class="modal-title">Update Order</div>
+
+      
+
+      <label class="form-label">Status</label>
+
+      <div class="input-group">
+
+          <select id="editStatus" class="gold-select light-theme">
+
+            <option value="PENDING">PENDING</option>
+
+            <option value="PAID">PAID</option>
+
+            <option value="WARNING">WARNING</option>
+
+            <option value="ERROR">ERROR</option>
+
+            <option value="">QUEUES (Blank)</option>
+
+          </select>
+
+          <i class="fa-solid fa-tag input-icon dark-icon"></i>
+
+      </div>
+
+      <label class="form-label">Filled Date</label>
+
+      <div class="input-group">
+
+          <input type="text" id="editFilled" class="gold-input light-theme" placeholder="DD/MM/YYYY">
+
+          <i class="fa-solid fa-pen-nib input-icon dark-icon"></i>
+
+      </div>
+
+      <label class="form-label">Paid Date</label>
+
+      <div class="input-group">
+
+          <input type="text" id="editPaid" class="gold-input light-theme" placeholder="DD/MM/YYYY">
+
+          <i class="fa-solid fa-calendar-check input-icon dark-icon"></i>
+
+      </div>
+
+      <label class="form-label">Remarks (Timeline)</label>
+
+      <div class="input-group">
+
+          <textarea id="editRemarks" class="gold-input light-theme" rows="3"></textarea>
+
+      </div>
+
+      <div class="modal-btn-row">
+
+        <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+
+        <button class="modal-save" id="saveBtn" onclick="saveChanges()">Save Update</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <header class="app-header">
+
+    <div class="header-left">
+
+        <img src="https://drive.google.com/thumbnail?id=1IgeL0FRaPXfpmnBEh7mKdpOa2Pgeqdn2&sz=w200" class="logo-img" alt="Logo">
+
+        <div class="logo-container">
+
+            <div class="logo">PREORDER PANEL</div>
+
+            <div class="meta-bar">ADMIN CONSOLE</div>
+
+        </div>
+
+    </div>
+
+    <div class="header-actions">
+
+        <div class="header-util-icon" title="System Status"><i class="fa-solid fa-server"></i></div>
+
+        <div class="status-pill"><div class="pulsing-dot"></div> ADMIN MODE</div>
+
+        <div style="position:relative;">
+
+            <button class="notif-btn" onclick="toggleNotifs()">
+
+                <i class="fa-solid fa-bell"></i>
+
+                <div id="notifBadge" class="notif-badge"></div>
+
+            </button>
+
+            <div id="notifPanel" class="notif-dropdown">
+
+                <div class="notif-header">
+
+                    <span>AUDIT LOGS</span>
+
+                    <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="toggleNotifs()"></i>
+
+                </div>
+
+                <div id="notifList" class="notif-list">
+
+                    <div class="loading-text">Loading logs...</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+  </header>
+
+  <div class="main-layout" id="mainContainer">
+
+    
+
+    <aside class="sidebar-controls">
+
+      <div class="gold-card control-card">
+
+        <div class="gold-card-bg"><i class="fa-solid fa-magnifying-glass wm-sidebar"></i></div>
+
+        <label class="form-label">Search</label>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-magnifying-glass input-icon"></i>
+
+            <input type="text" id="searchInput" class="gold-input" placeholder="ID or Name..." onkeyup="handleSearchKey()">
+
+            <i class="fa-solid fa-circle-xmark clear-icon" id="searchClearBtn" onclick="clearSearch()"></i>
+
+        </div>
+
+      </div>
+
+      
+
+      <button class="btn-vision" onclick="toggleVisionView()">
+
+        <div class="vision-glow"></div>
+
+        <span id="visionBtnText"><i class="fa-solid fa-eye"></i> &nbsp; VISION VIEW</span>
+
+      </button>
+
+      <div class="gold-card control-card">
+
+        <div class="gold-card-bg"><i class="fa-solid fa-filter wm-sidebar"></i></div>
+
+        <label class="form-label">Filters</label>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-handshake input-icon"></i>
+
+            <select id="mediatorSelect" class="gold-select" onchange="applyFilters()"><option value="All">All Mediators</option></select>
+
+            <i class="fa-solid fa-chevron-down input-arrow"></i>
+
+        </div>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-tags input-icon"></i>
+
+            <select id="statusSelect" class="gold-select" onchange="applyFilters()">
+
+                <option value="All">All Statuses</option>
+
+                <option value="PAID">Paid</option>
+
+                <option value="PENDING">Pending</option>
+
+                <option value="QUEUES">QUEUES</option>
+
+            </select>
+
+            <i class="fa-solid fa-chevron-down input-arrow"></i>
+
+        </div>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-calendar-days input-icon"></i>
+
+            <select id="monthSelect" class="gold-select" onchange="applyFilters()"><option value="All">All Months</option></select>
+
+            <i class="fa-solid fa-chevron-down input-arrow"></i>
+
+        </div>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-layer-group input-icon"></i>
+
+            <select id="typeSelect" class="gold-select" onchange="applyFilters()">
+
+                <option value="All">All Types</option>
+
+                <option value="LESS">Less Orders (Deducted)</option>
+
+                <option value="COMMISSION">Commission Orders</option>
+
+                <option value="FULL">Full Refund Orders</option>
+
+            </select>
+
+            <i class="fa-solid fa-chevron-down input-arrow"></i>
+
+        </div>
+
+        <label class="form-label sort-label">Sort Order</label>
+
+        <div class="input-group">
+
+            <i class="fa-solid fa-arrow-down-wide-short input-icon"></i>
+
+            <select id="sortSelect" class="gold-select" onchange="applyFilters()">
+
+                <option value="DESC">Newest First (Descending)</option>
+
+                <option value="ASC">Oldest First (Ascending)</option>
+
+            </select>
+
+            <i class="fa-solid fa-chevron-down input-arrow"></i>
+
+        </div>
+
+      </div>
+
+      <div class="gold-card control-card">
+
+        <div class="gold-card-bg"><i class="fa-solid fa-trophy wm-sidebar"></i></div>
+
+        <label class="form-label">Leaderboard</label>
+
+        <div id="leaderboardList" class="leaderboard-container"></div>
+
+      </div>
+
+      
+
+      <button class="btn-gold" onclick="downloadCSV()">
+
+          <i class="fa-solid fa-file-csv"></i> Download CSV
+
+      </button>
+
+    </aside>
+
+    <main class="content-area">
+
+      
+
+      <div id="view-home" class="view-section active-view">
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="gold-card-bg"><i class="fa-solid fa-boxes-stacked wm-stat"></i></div>
+
+                <div class="stat-title">Orders</div><div class="stat-value" id="statOrders">0</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="gold-card-bg"><i class="fa-solid fa-wallet wm-stat"></i></div>
+
+                <div class="stat-title">Amount</div><div class="stat-value" id="statTotalValue">₹0</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="gold-card-bg"><i class="fa-solid fa-scissors wm-stat"></i></div>
+
+                <div class="stat-title">Deducted</div><div class="stat-value" id="statDeducted">₹0</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="gold-card-bg"><i class="fa-solid fa-rotate-left wm-stat"></i></div>
+
+                <div class="stat-title">Refundable</div><div class="stat-value" id="statRefundable">₹0</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="gold-card-bg"><i class="fa-solid fa-chart-line wm-stat"></i></div>
+
+                <div class="stat-title">Commission</div><div class="stat-value" id="statCommission">₹0</div>
+
+            </div>
+
+        </div>
+
+        <div id="ordersGridHome" class="orders-grid"></div>
+
+      </div>
+
+      <div id="view-graph" class="view-section hidden-view">
+
+          <div class="gold-card placeholder-card">
+
+            <i class="fa-solid fa-chart-pie placeholder-icon"></i>
+
+            <h2>Analytics Hub</h2>
+
+            <p>Detailed performance charts coming soon.</p>
+
+          </div>
+
+      </div>
+
+      <div id="view-list" class="view-section hidden-view">
+
+          <div class="section-title">FULL ORDER REGISTRY</div>
+
+          <div id="ordersGridList" class="orders-grid"></div>
+
+      </div>
+
+      <div id="view-vision" class="view-section vision-viewport hidden-view">
+
+        
+
+        <div id="vision-cluster-stage" class="vision-stage">
+
+            <div class="vision-header">
+
+                <h2><i class="fa-solid fa-layer-group"></i> MEDIATOR CLUSTERS</h2>
+
+                <p>Select a stack to enter immersive flow.</p>
+
+            </div>
+
+            <div id="cluster-grid" class="cluster-grid"></div>
+
+        </div>
+
+        
+
+        <div id="vision-carousel-stage" class="vision-stage hidden-view">
+
+            <div class="carousel-ui-layer">
+
+                <button class="btn-back-vision" onclick="exitCarousel()">
+
+                    <i class="fa-solid fa-arrow-left-long"></i> BACK TO CLUSTERS
+
+                </button>
+
+                <div class="carousel-meta">
+
+                    <h1 id="carousel-title">MEDIATOR NAME</h1>
+
+                    <span id="carousel-counter">1 / 50</span>
+
+                </div>
+
+            </div>
+
+            <div class="carousel-scene">
+
+                <div id="carousel-track" class="carousel-track"></div>
+
+            </div>
+
+            <div class="nav-zone left" onclick="moveCarousel(-1)"></div>
+
+            <div class="nav-zone right" onclick="moveCarousel(1)"></div>
+
+        </div>
+
+      </div>
+
+      <footer>
+
+        &copy; PREORDER SYSTEM 2026. ALL RIGHTS RESERVED.
+
+      </footer>
+
+    </main>
+
+  </div>
+
+  <button class="scroll-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+
+    <i class="fa-solid fa-arrow-up"></i>
+
+  </button>
+
+  <nav class="bottom-nav" id="mainNavBar">
+
+    <div class="nav-pill">
+
+      <button class="nav-item active" onclick="switchTab('home')">
+
+        <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+
+        <span class="nav-label">Home</span>
+
+      </button>
+
+      <button class="nav-item" onclick="switchTab('graph')">
+
+        <div class="nav-icon"><i class="fa-solid fa-chart-simple"></i></div>
+
+        <span class="nav-label">Graph</span>
+
+      </button>
+
+      <button class="nav-item" onclick="switchTab('list')">
+
+        <div class="nav-icon"><i class="fa-solid fa-list-check"></i></div>
+
+        <span class="nav-label">List</span>
+
+      </button>
+
+    </div>
+
+  </nav>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
